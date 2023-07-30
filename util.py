@@ -1,23 +1,20 @@
 import numpy as np
-from scipy.misc import imread, imresize, imsave
+import imageio
 import torch
-
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".png", ".jpg", ".jpeg"])
 
-
 def load_img(filepath):
-    img = imread(filepath)
+    img = imageio.imread(filepath)
     if len(img.shape) < 3:
         img = np.expand_dims(img, axis=2)
         img = np.repeat(img, 3, axis=2)
-    img = imresize(img, (256, 256))
+    img = imageio.imresize(img, (256, 256))
     img = np.transpose(img, (2, 0, 1))
     img = torch.from_numpy(img)
     img = preprocess_img(img)
     return img
-
 
 def save_img(img, filename):
     img = deprocess_img(img)
@@ -25,9 +22,9 @@ def save_img(img, filename):
     img *= 255.0
     img = img.clip(0, 255)
     img = np.transpose(img, (1, 2, 0))
-    img = imresize(img, (250, 200, 3))
+    img = imageio.imresize(img, (250, 200, 3))
     img = img.astype(np.uint8)
-    imsave(filename, img)
+    imageio.imsave(filename, img)
     print("Image saved as {}".format(filename))
 
 
